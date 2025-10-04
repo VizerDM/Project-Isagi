@@ -1,9 +1,9 @@
 import Tracker from "./Tracker";
+import { useState } from "react";
 
 function App() {
-  const checks = Array.from({ length: 30 }, (_, i) =>
-    i % 2 === 0 ? true : false
-  );
+  const [checks, SetChecks] = useState<boolean[]>(Array(30).fill(false));
+
   return <Tracker name="GYM" checks={checks} />;
 }
 

@@ -4,9 +4,7 @@ type Habit = {
   name: string;
   checks: boolean[];
 };
-const [checks, SetChecks] = useState<boolean[]>(Array(30).fill(false));
-
-function Tracker({ name }: Habit) {
+function Tracker({ name, checks }: Habit) {
   const days = Array.from({ length: 30 }, (_, i) => i + 1);
 
   return (
@@ -23,7 +21,7 @@ function Tracker({ name }: Habit) {
             <th>{name}</th>
             {days.map((day) => (
               <td key={day}>
-                <input type="checkbox"></input>
+                <input type="checkbox" checked={checks[day - 1]}></input>
               </td>
             ))}
           </tr>
