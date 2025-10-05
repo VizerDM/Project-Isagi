@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 type Habit = {
   name: string;
@@ -6,13 +6,30 @@ type Habit = {
 };
 
 function Tracker() {
-  const [habits, SetHabits] = useState<Habit[]>([
+  const [habits, setHabits] = useState<Habit[]>([
     { name: "GYM", checks: Array(30).fill(false) },
+    { name: "Work", checks: Array(30).fill(false) },
   ]);
+
+  const [adding, setAdding] = useState(false);
+  const inputref = useRef<HTMLInputElement | null>(null); //reference to the input button
+
+  useEffect(() => {
+    if (adding && inputref.current) {
+      inputref.current.focus();
+    }
+  }, [adding]);
+
+  const addHabits = (name: string) => {
+    if (!name.trim()) return;
+    const newHabit = { name: name, checks: Array(30).fill(false) };
+    setHabits((prev) => [...prev, newHabit]);
+    setAdding(false);
+  };
 
   const onCheck = (habitIndex: number, dayIndex: number): void => {
     // handler for when a checkbox is ticked/unticked
-    SetHabits(
+    setHabits(
       (
         prevHabits //The useState Modifier, this is the second method that uses the previous object
       ) =>
@@ -43,25 +60,47 @@ function Tracker() {
       <table>
         <tbody>
           <tr>
-            <th>Days / Habits</th>
+            <th>Habits/Days</th>
+
             {days.map((day) => {
               return <th key={day}>{day}</th>;
             })}
           </tr>
-          <tr>
-            <th>{habits[0].name}</th>
-            {days.map((day) => (
-              <td key={day}>
-                <input
-                  type="checkbox"
-                  checked={habits[0].checks[day - 1]}
-                  onChange={() => onCheck(0, day - 1)}
-                ></input>
-              </td>
-            ))}
-          </tr>
+
+          {habits.map((habit, hIdx) => (
+            <tr key={hIdx}>
+              <th>{habit.name}</th>
+              {habit.checks.map((checked, dIdx) => (
+                <td key={dIdx}>
+                  <input
+                    key={dIdx}
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() => onCheck(hIdx, dIdx)}
+                  ></input>
+                </td>
+              ))}
+            </tr>
+          ))}
         </tbody>
       </table>
+      <input type="button" value="Add Habit" onClick={() => setAdding(true)} />
+      {adding && (
+        <input
+          type="text"
+          //reference to auto focus on the text input
+          ref={inputref}
+          // When the user presses Enter
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              const value = (e.target as HTMLInputElement).value;
+
+              addHabits(value);
+              (e.target as HTMLInputElement).value = "";
+            }
+          }}
+        />
+      )}
     </>
   );
 }
