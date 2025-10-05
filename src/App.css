@@ -1,4 +1,22 @@
-body{
+body {
     margin: 0;
-    background-color: rgb(53, 50, 50);
+    background-color: rgb(37, 46, 55);
+    color: hsl(245, 100%, 90%);
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+h1 {
+    width: 100%;
+    position: sticky;
+    display: flex;
+    justify-content: center;
+    font-weight: 600;
+    font-style: italic;
+    border-bottom: #6C5DD3 2px solid;
+    padding-bottom: 15px;
+    letter-spacing: 1.5px;
+
 }

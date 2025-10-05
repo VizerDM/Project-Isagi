@@ -1,8 +1,15 @@
-import Tracker from "./Tracker";
-import { useState } from "react";
+import Tracker from "./Components/Tracker";
+import "./App.css";
 
 function App() {
-  return <Tracker />;
+  return (
+    <>
+      <div className="main-app">
+        <h1>Isagi</h1>
+        <Tracker />
+      </div>
+    </>
+  );
 }
 
 export default App;
