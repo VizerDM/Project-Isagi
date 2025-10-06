@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, use } from "react";
 import "./Tracker.css";
 
 type Habit = {
@@ -7,13 +7,22 @@ type Habit = {
 };
 
 function Tracker() {
-  const [habits, setHabits] = useState<Habit[]>([
-    { name: "GYM", checks: Array(30).fill(false) },
-    { name: "Work", checks: Array(30).fill(false) },
-  ]);
+  const STORAGE_KEY = "habitsData";
+  const [habits, setHabits] = useState<Habit[]>(() => {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY);
+      return data ? JSON.parse(data) : [];
+    } catch {
+      return [];
+    }
+  });
 
   const [adding, setAdding] = useState(false);
   const inputref = useRef<HTMLInputElement | null>(null); //reference to the input button
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(habits));
+  }, [habits]);
 
   useEffect(() => {
     if (adding && inputref.current) {
@@ -26,6 +35,12 @@ function Tracker() {
     const newHabit = { name: name, checks: Array(30).fill(false) };
     setHabits((prev) => [...prev, newHabit]);
     setAdding(false);
+  };
+
+  const clearAll = () => {
+    setHabits((prev) =>
+      prev.map((habit, hIdx) => ({ ...habit, checks: Array(30).fill(false) }))
+    );
   };
 
   const onCheck = (habitIndex: number, dayIndex: number): void => {
@@ -108,6 +123,12 @@ function Tracker() {
               }}
             />
           )}
+          <input
+            type="button"
+            value="Clear All"
+            onClick={() => clearAll()}
+            className="clear"
+          />
         </div>
       </div>
     </>
