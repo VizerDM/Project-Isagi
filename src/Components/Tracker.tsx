@@ -7,21 +7,34 @@ type Habit = {
 };
 
 function Tracker() {
-  const STORAGE_KEY = "habitsData";
+  const STORAGE_KEY_HABITS = "habitsData";
+  const STORAGE_KET_SLEEP = "sleepData";
+
+  //habit load
   const [habits, setHabits] = useState<Habit[]>(() => {
     try {
-      const data = localStorage.getItem(STORAGE_KEY);
+      const data = localStorage.getItem(STORAGE_KEY_HABITS);
       return data ? JSON.parse(data) : [];
     } catch {
       return [];
     }
   });
 
+  //Sleep Load
+  const[sleeps,setSleep] = useState<number[]>(()=>{
+    try{
+      const data  = localStorage.getItem(STORAGE_KET_SLEEP);
+      return data ? JSON.parse(data) : [];
+    }catch{
+      return [];
+    }
+  })
+
   const [adding, setAdding] = useState(false);
   const inputref = useRef<HTMLInputElement | null>(null); //reference to the input button
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(habits));
+    localStorage.setItem(STORAGE_KEY_HABITS, JSON.stringify(habits));
   }, [habits]);
 
   useEffect(() => {
@@ -30,17 +43,33 @@ function Tracker() {
     }
   }, [adding]);
 
+  const isDuplicate = (name: string) => {
+    return habits.some(
+      (habit) => habit.name.toLowerCase() === name.toLowerCase()
+    );
+  };
+  // add a habit
   const addHabits = (name: string) => {
-    if (!name.trim()) return;
+    if (!name.trim() || isDuplicate(name)) {
+      setAdding(false);
+      return;
+    }
     const newHabit = { name: name, checks: Array(30).fill(false) };
     setHabits((prev) => [...prev, newHabit]);
     setAdding(false);
   };
 
+  //Clear all checks on habits
   const clearAll = () => {
+    window.confirm("Are you sure?");
     setHabits((prev) =>
       prev.map((habit, hIdx) => ({ ...habit, checks: Array(30).fill(false) }))
     );
+  };
+
+  //Delete A habit
+  const deleteHabit = (habitIndex: number) => {
+    setHabits((prev) => prev.filter((_, hIdx) => hIdx !== habitIndex));
   };
 
   const onCheck = (habitIndex: number, dayIndex: number): void => {
@@ -86,7 +115,15 @@ function Tracker() {
 
             {habits.map((habit, hIdx) => (
               <tr key={hIdx}>
-                <th>{habit.name}</th>
+                <th>
+                  {habit.name}
+                  <input
+                    type="button"
+                    className="delete-btn"
+                    value="X"
+                    onClick={() => deleteHabit(hIdx)}
+                  />
+                </th>
                 {habit.checks.map((checked, dIdx) => (
                   <td key={dIdx} scope="row">
                     <input
