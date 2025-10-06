@@ -1,6 +1,7 @@
 .main {
     padding: 0 50px;
-    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
 }
 
 #root {
@@ -16,9 +17,32 @@ table {
     border-collapse: collapse;
     margin-top: 40px;
     border: 4px;
-
+    overflow-x: scroll;
+    border: #686c7b 1px solid;
 
 }
+
+table th:nth-child(even) {
+    color: #FFA2C0;
+}
+
+table th:nth-child(odd) {
+    color: #CFC8FF;
+}
+
+table tr:nth-child(even) th:first-child {
+    color: #6C5DD0;
+}
+
+table tr:nth-child(odd) th:first-child {
+    color: #CFC8FF;
+}
+
+table tr:nth-child(odd) td {
+    background-color: #2f3138;
+}
+
+
 
 th {
     width: 25px;
@@ -27,7 +51,6 @@ th {
 
 table th:first-child,
 table td:first-child {
-    color: #6C5DD3;
     padding: 0 15px;
     width: 40px;
 
@@ -36,7 +59,7 @@ table td:first-child {
 
 td {
     width: calc(100%/30);
-
+    border: 1px;
 }
 
 input[type="checkbox"] {
@@ -46,7 +69,7 @@ input[type="checkbox"] {
     width: 27px;
     height: 27px;
 
-    border: 1px solid #555;
+    border: 3px solid #555;
     border-radius: 4px;
     background-color: #9e9d9d;
     cursor: pointer;
@@ -56,7 +79,8 @@ input[type="checkbox"] {
 
 input[type="checkbox"]:checked {
     background-color: #7df491;
-    border-color: #49f0c1;
+    border-color: #1cb767;
+    box-shadow: #0ec064 0px 0px 4px -2px;
 }
 
 input[type="checkbox"]:hover {
