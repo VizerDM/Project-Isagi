@@ -1,15 +1,23 @@
 .main {
     padding: 0 50px;
-    max-width: 100%;
+    width: 90%;
     overflow-x: auto;
+    overflow-y: visible;
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+
 }
 
-#root {
+.main-app {
     display: flex;
-    justify-content: center;
-    width: 100%;
+    flex-direction: column;
+    align-items: center;
     height: 100%;
 }
+
+
+
 
 table {
     font-family: inter;
@@ -41,8 +49,8 @@ table tr:nth-child(odd) th:first-child {
     color: #CFC8FF;
 }
 
-table tr:nth-child(odd) td {
-    background-color: #2f3138;
+table tr:first-child {
+    background-color: #262A34;
 }
 
 
@@ -102,7 +110,7 @@ input[type="button"] {
     text-decoration: none;
     border: 1px solid #a5864c;
     background-color: #FFCE73;
-    box-shadow: 0px 1px 2px black;
+    box-shadow: 0px 0px 3px -1px #FFCE73;
     border-radius: 3px;
     margin: 2px;
     transition: 0.2s ease;
@@ -133,7 +141,7 @@ input[type="button"]:hover {
 input[type="button"].clear {
     background-color: #f978a1;
     border-color: #dc5d85;
-    box-shadow: #f978a1 0px 0px 2px;
+    box-shadow: #f978a1 0px 0px 3px -1px;
     color: #982f50;
 
 }
@@ -164,4 +172,42 @@ th:hover .delete-btn {
     opacity: 1;
     visibility: visible;
 
+}
+
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+input[type="number"] {
+    appearance: textfield;
+}
+
+input[type="number"]:focus {
+    outline: none;
+
+}
+
+.sleep-input {
+    width: 20px;
+    height: 20px;
+    background-color: #262A34;
+    border: 1px solid #5f87ed;
+    color: #c4c5d8;
+    border-radius: 5px;
+    margin-left: 2.2px;
+    text-align: center;
+}
+
+
+#sleep-row {
+    color: #5f87ed;
+    border: 0.5px solid #678ae4;
+    letter-spacing: 1.5px;
 }

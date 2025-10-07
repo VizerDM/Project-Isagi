@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, use } from "react";
 import "./Tracker.css";
+import Select from "react-select";
 
 type Habit = {
   name: string;
@@ -8,7 +9,7 @@ type Habit = {
 
 function Tracker() {
   const STORAGE_KEY_HABITS = "habitsData";
-  const STORAGE_KET_SLEEP = "sleepData";
+  const STORAGE_KEY_SLEEP = "sleepData";
 
   //habit load
   const [habits, setHabits] = useState<Habit[]>(() => {
@@ -21,18 +22,30 @@ function Tracker() {
   });
 
   //Sleep Load
-  const[sleeps,setSleep] = useState<number[]>(()=>{
-    try{
-      const data  = localStorage.getItem(STORAGE_KET_SLEEP);
-      return data ? JSON.parse(data) : [];
-    }catch{
-      return [];
+  const [sleeps, setSleep] = useState<number[]>(() => {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY_SLEEP);
+      return data ? JSON.parse(data) : Array(30).fill(0);
+    } catch {
+      return Array(30).fill(0);
     }
-  })
+  });
+
+  const addSleep = (hrs: number, dayIndex: number) => {
+    if (hrs < 0 || hrs > 12) return;
+    setSleep((prev) =>
+      prev.map((hours, dIdx) => (dayIndex === dIdx ? hrs : hours))
+    );
+  };
 
   const [adding, setAdding] = useState(false);
   const inputref = useRef<HTMLInputElement | null>(null); //reference to the input button
 
+  //Save sleep change
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY_SLEEP, JSON.stringify(sleeps));
+  }, [sleeps]);
+  //Save habit change
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY_HABITS, JSON.stringify(habits));
   }, [habits]);
@@ -59,12 +72,13 @@ function Tracker() {
     setAdding(false);
   };
 
-  //Clear all checks on habits
+  //Clear all checks on habits ++ Clears sleepdata also
   const clearAll = () => {
     window.confirm("Are you sure?");
     setHabits((prev) =>
-      prev.map((habit, hIdx) => ({ ...habit, checks: Array(30).fill(false) }))
+      prev.map((habit) => ({ ...habit, checks: Array(30).fill(false) }))
     );
+    setSleep((prev) => prev.map((hrs) => 0));
   };
 
   //Delete A habit
@@ -136,6 +150,21 @@ function Tracker() {
                 ))}
               </tr>
             ))}
+
+            <tr>
+              <th id="sleep-row">Sleep</th>
+              {sleeps.map((hrs, dIdx) => (
+                <td key={dIdx}>
+                  <input
+                    type="number"
+                    max={12}
+                    value={hrs}
+                    onChange={(e) => addSleep(Number(e.target.value), dIdx)}
+                    className="sleep-input"
+                  />
+                </td>
+              ))}
+            </tr>
           </tbody>
         </table>
         <div className="add-habit">
