@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect} from "react";
+import { useState, useRef, useEffect } from "react";
 import "./Tracker.css";
 import {
   LineChart,
@@ -15,57 +15,70 @@ type Habit = {
   checks: boolean[];
 };
 type Month = {
-  days:number,
-  name:string,
-  habits: Habit[],
-  sleep: {day:},
-
-  
-}
+  days: number;
+  name: string;
+  habits: Habit[];
+  sleep: number[];
+};
 
 function Tracker() {
-  const STORAGE_KEY_HABITS = "habitsData";
-  const STORAGE_KEY_SLEEP = "sleepData";
+  const STORAGE_KEY_MONTHS = "monthData";
 
-  //habit load
-  const [habits, setHabits] = useState<Habit[]>(() => {
-    try {
-      const data = localStorage.getItem(STORAGE_KEY_HABITS);
-      return data ? JSON.parse(data) : [];
-    } catch {
-      return [];
+  const [months, setMonths] = useState<Month[]>(() => {
+    const DefaultMonths = {
+      January: 31,
+      February: 28, // 29 in leap years
+      March: 31,
+      April: 30,
+      May: 31,
+      June: 30,
+      July: 31,
+      August: 31,
+      September: 30,
+      October: 31,
+      November: 30,
+      December: 31,
+    };
+    const monthsArray = Object.entries(DefaultMonths).map(([name, days]) => ({
+      name,
+      days,
+      sleep: Array(days).fill(0),
+      habits: [],
+    }));
+    const saved = localStorage.getItem(STORAGE_KEY_MONTHS);
+    if (saved) {
+      return JSON.parse(saved);
+    } else {
+      return monthsArray;
     }
   });
 
-  //Sleep Load
-  const [sleeps, setSleep] = useState<number[]>(() => {
-    try {
-      const data = localStorage.getItem(STORAGE_KEY_SLEEP);
-      return data ? JSON.parse(data) : Array(30).fill(0);
-    } catch {
-      return Array(30).fill(0);
-    }
-  });
-
-  const addSleep = (hrs: number, dayIndex: number) => {
+  const addSleep = (hrs: number, dayIndex: number, monthIndex: number) => {
     if (hrs < 0 || hrs > 12) return;
-    setSleep((prev) =>
-      prev.map((hours, dIdx) => (dayIndex === dIdx ? hrs : hours))
+    setMonths((prev) =>
+      prev.map((month, mIdx) =>
+        monthIndex === mIdx
+          ? {
+              ...month,
+              sleep: month.sleep.map((hours, dIdx) =>
+                dIdx === dayIndex ? hrs : hours
+              ),
+            }
+          : month
+      )
     );
   };
 
   const [adding, setAdding] = useState(false);
   const inputref = useRef<HTMLInputElement | null>(null); //reference to the input button
+  const [currentMonth, setCurrMonth] = useState(0);
 
-  //Save sleep change
+  //Save ALL changes
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY_SLEEP, JSON.stringify(sleeps));
-  }, [sleeps]);
-  //Save habit change
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY_HABITS, JSON.stringify(habits));
-  }, [habits]);
+    localStorage.setItem(STORAGE_KEY_MONTHS, JSON.stringify(months));
+  }, [months]);
 
+  //focus on the text input
   useEffect(() => {
     if (adding && inputref.current) {
       inputref.current.focus();
@@ -73,64 +86,89 @@ function Tracker() {
   }, [adding]);
 
   const isDuplicate = (name: string) => {
-    return habits.some(
+    return months[currentMonth].habits.some(
       (habit) => habit.name.toLowerCase() === name.toLowerCase()
     );
   };
   // add a habit
-  const addHabits = (name: string) => {
+  const addHabits = (name: string, currentMonth: number) => {
     if (!name.trim() || isDuplicate(name)) {
       setAdding(false);
       return;
     }
     const newHabit = { name: name, checks: Array(30).fill(false) };
-    setHabits((prev) => [...prev, newHabit]);
+    setMonths((prev) =>
+      prev.map((month, mIdx) =>
+        mIdx === currentMonth
+          ? { ...month, habits: [...month.habits, newHabit] }
+          : month
+      )
+    );
     setAdding(false);
   };
 
-  //Clear all checks on habits ++ Clears sleepdata also
-  const clearAll = () => {
+  //Clear all
+  const clearAll = (monthIndex: number) => {
     window.confirm("Are you sure?");
-    setHabits((prev) =>
-      prev.map((habit) => ({ ...habit, checks: Array(30).fill(false) }))
+    setMonths((prev) =>
+      prev.map((month, mIdx) =>
+        monthIndex === mIdx
+          ? {
+              ...month,
+              sleep: Array(month.days).fill(0),
+              habits: month.habits.map((habit) => ({
+                ...habit,
+                checks: Array(month.days).fill(false),
+              })),
+            }
+          : month
+      )
     );
-    setSleep((prev) => prev.map((hrs) => 0));
   };
 
   //Delete A habit
-  const deleteHabit = (habitIndex: number) => {
-    setHabits((prev) => prev.filter((_, hIdx) => hIdx !== habitIndex));
-  };
-
-  const onCheck = (habitIndex: number, dayIndex: number): void => {
-    // handler for when a checkbox is ticked/unticked
-    setHabits(
-      (
-        prevHabits //The useState Modifier, this is the second method that uses the previous object
-      ) =>
-        prevHabits.map(
-          (
-            habit,
-            hIdx //copying each habit in a new array of habits (new state ig)
-          ) =>
-            habitIndex === hIdx
-              ? {
-                  ...habit, //Spread Op. it copies all propreties of the previous habit obj in this the name.
-                  checks: habit.checks.map(
-                    (
-                      checked,
-                      dIdx //now we copy the checks array and change only the checked day
-                    ) => (dIdx === dayIndex ? !checked : checked)
-                  ),
-                }
-              : habit
-        )
+  const deleteHabit = (habitIndex: number, currentMonth: number) => {
+    setMonths((prev) =>
+      prev.map((month, mIdx) =>
+        mIdx === currentMonth
+          ? {
+              ...month,
+              habits: month.habits.filter((_, hIdx) => hIdx !== habitIndex),
+            }
+          : month
+      )
     );
   };
 
-  const days = Array.from({ length: 30 }, (_, i) => i + 1);
+  const onCheck = (
+    habitIndex: number,
+    dayIndex: number,
+    currentMonth: number
+  ) => {
+    setMonths((prev) =>
+      prev.map((month, mIdx) =>
+        mIdx === currentMonth
+          ? {
+              ...month,
+              habits: month.habits.map((habit, hIdx) =>
+                hIdx === habitIndex
+                  ? {
+                      ...habit,
+                      checks: habit.checks.map((checked, dIdx) =>
+                        dIdx === dayIndex ? !checked : checked
+                      ),
+                    }
+                  : habit
+              ),
+            }
+          : month
+      )
+    );
+  };
 
-  const sleepData = sleeps.map((hrs, i) => ({
+  const days = Array.from({ length: months[currentMonth].days }, (_, i) => i + 1);
+
+  const sleepData = months[currentMonth].sleep.map((hrs, i) => ({
     day: i + 1,
     sleep: hrs,
   }));
@@ -138,6 +176,23 @@ function Tracker() {
   return (
     <>
       <div className="main">
+        <div month-main>
+          <select
+            className="month-select"
+            value={currentMonth}
+            onChange={(e) => {
+              const value = e.target.value;
+              setCurrMonth(Number(value));
+            }}
+          >
+            {months.map((month, monthIdx) => (
+              <option key={monthIdx} value={monthIdx}>
+                {month.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <table border={1}>
           <tr>
             <th></th>
@@ -147,7 +202,7 @@ function Tracker() {
             })}
           </tr>
 
-          {habits.map((habit, hIdx) => (
+          {months[currentMonth].habits.map((habit, hIdx) => (
             <tr key={hIdx}>
               <th>
                 {habit.name}
@@ -155,7 +210,7 @@ function Tracker() {
                   type="button"
                   className="delete-btn"
                   value="X"
-                  onClick={() => deleteHabit(hIdx)}
+                  onClick={() => deleteHabit(hIdx, currentMonth)}
                 />
               </th>
               {habit.checks.map((checked, dIdx) => (
@@ -164,7 +219,7 @@ function Tracker() {
                     key={dIdx}
                     type="checkbox"
                     checked={checked}
-                    onChange={() => onCheck(hIdx, dIdx)}
+                    onChange={() => onCheck(hIdx, dIdx, currentMonth)}
                   ></input>
                 </td>
               ))}
@@ -173,13 +228,15 @@ function Tracker() {
 
           <tr>
             <th id="sleep-row">Sleep</th>
-            {sleeps.map((hrs, dIdx) => (
+            {months[currentMonth].sleep.map((hrs, dIdx) => (
               <td key={dIdx}>
                 <input
                   type="number"
                   max={12}
                   value={hrs}
-                  onChange={(e) => addSleep(Number(e.target.value), dIdx)}
+                  onChange={(e) =>
+                    addSleep(Number(e.target.value), dIdx, currentMonth)
+                  }
                   className="sleep-input"
                 />
               </td>
@@ -203,7 +260,7 @@ function Tracker() {
                 if (e.key === "Enter") {
                   const value = (e.target as HTMLInputElement).value;
 
-                  addHabits(value);
+                  addHabits(value, currentMonth);
                   (e.target as HTMLInputElement).value = "";
                 }
               }}
@@ -212,7 +269,7 @@ function Tracker() {
           <input
             type="button"
             value="Clear All"
-            onClick={() => clearAll()}
+            onClick={() => clearAll(currentMonth)}
             className="clear"
           />
         </div>
