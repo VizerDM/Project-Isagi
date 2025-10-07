@@ -23,6 +23,7 @@ type Month = {
 
 function Tracker() {
   const STORAGE_KEY_MONTHS = "monthData";
+  const STORAGE_KEY_CURR_MONTH = "currMonthData";
 
   const [months, setMonths] = useState<Month[]>(() => {
     const DefaultMonths = {
@@ -71,12 +72,22 @@ function Tracker() {
 
   const [adding, setAdding] = useState(false);
   const inputref = useRef<HTMLInputElement | null>(null); //reference to the input button
-  const [currentMonth, setCurrMonth] = useState(0);
+  const [currentMonth, setCurrMonth] = useState<number>(() => {
+    const data = localStorage.getItem(STORAGE_KEY_CURR_MONTH);
+    if (data) {
+      return JSON.parse(data);
+    } else {
+      return 0;
+    }
+  });
 
   //Save ALL changes
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY_MONTHS, JSON.stringify(months));
   }, [months]);
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY_CURR_MONTH, JSON.stringify(currentMonth));
+  }, [currentMonth]);
 
   //focus on the text input
   useEffect(() => {
