@@ -96,7 +96,10 @@ function Tracker() {
       setAdding(false);
       return;
     }
-    const newHabit = { name: name, checks: Array(30).fill(false) };
+    const newHabit = {
+      name: name,
+      checks: Array(months[currentMonth].days).fill(false),
+    };
     setMonths((prev) =>
       prev.map((month, mIdx) =>
         mIdx === currentMonth
@@ -166,31 +169,55 @@ function Tracker() {
     );
   };
 
-  const days = Array.from({ length: months[currentMonth].days }, (_, i) => i + 1);
+  const days = Array.from(
+    { length: months[currentMonth].days },
+    (_, i) => i + 1
+  );
 
   const sleepData = months[currentMonth].sleep.map((hrs, i) => ({
     day: i + 1,
     sleep: hrs,
   }));
+  const [showMonthDropdown, setShowMonthDropdown] = useState(false);
 
   return (
     <>
       <div className="main">
-        <div month-main>
-          <select
-            className="month-select"
-            value={currentMonth}
-            onChange={(e) => {
-              const value = e.target.value;
-              setCurrMonth(Number(value));
-            }}
+        <div className="month-main">
+          <button
+            className="month-button"
+            onClick={() => setShowMonthDropdown((v) => !v)}
           >
-            {months.map((month, monthIdx) => (
-              <option key={monthIdx} value={monthIdx}>
-                {month.name}
-              </option>
-            ))}
-          </select>
+            {months[currentMonth].name} ▼
+          </button>
+          {showMonthDropdown && (
+            <select
+              className="month-select"
+              value={currentMonth}
+              onChange={(e) => {
+                setCurrMonth(Number(e.target.value));
+                setShowMonthDropdown(false);
+              }}
+              size={months.length}
+              style={{
+                position: "absolute",
+                zIndex: 10,
+                left: 0,
+                top: "2.5em",
+                minWidth: "120px",
+                background: "#fff",
+                border: "1px solid #aaa",
+                borderRadius: "6px",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+              }}
+            >
+              {months.map((month, monthIdx) => (
+                <option key={monthIdx} value={monthIdx}>
+                  {month.name}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
 
         <table border={1}>
