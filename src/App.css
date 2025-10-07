@@ -17,7 +17,7 @@ body,
 
 body {
     margin: 0;
-    color: hsl(245, 100%, 90%);
+    color: lab(83.87% 11.52 -24.44);
 
     width: 100%;
     box-sizing: border-box;

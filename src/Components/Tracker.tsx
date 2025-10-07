@@ -1,11 +1,27 @@
-import { useState, useRef, useEffect, use } from "react";
+import { useState, useRef, useEffect} from "react";
 import "./Tracker.css";
-import Select from "react-select";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+  CartesianGrid,
+  Tooltip,
+} from "recharts";
 
 type Habit = {
   name: string;
   checks: boolean[];
 };
+type Month = {
+  days:number,
+  name:string,
+  habits: Habit[],
+  sleep: {day:},
+
+  
+}
 
 function Tracker() {
   const STORAGE_KEY_HABITS = "habitsData";
@@ -114,59 +130,63 @@ function Tracker() {
 
   const days = Array.from({ length: 30 }, (_, i) => i + 1);
 
+  const sleepData = sleeps.map((hrs, i) => ({
+    day: i + 1,
+    sleep: hrs,
+  }));
+
   return (
     <>
       <div className="main">
         <table border={1}>
-          <tbody>
-            <tr>
-              <th></th>
+          <tr>
+            <th></th>
 
-              {days.map((day) => {
-                return <th key={day}>{day}</th>;
-              })}
-            </tr>
+            {days.map((day) => {
+              return <th key={day}>{day}</th>;
+            })}
+          </tr>
 
-            {habits.map((habit, hIdx) => (
-              <tr key={hIdx}>
-                <th>
-                  {habit.name}
+          {habits.map((habit, hIdx) => (
+            <tr key={hIdx}>
+              <th>
+                {habit.name}
+                <input
+                  type="button"
+                  className="delete-btn"
+                  value="X"
+                  onClick={() => deleteHabit(hIdx)}
+                />
+              </th>
+              {habit.checks.map((checked, dIdx) => (
+                <td key={dIdx} scope="row">
                   <input
-                    type="button"
-                    className="delete-btn"
-                    value="X"
-                    onClick={() => deleteHabit(hIdx)}
-                  />
-                </th>
-                {habit.checks.map((checked, dIdx) => (
-                  <td key={dIdx} scope="row">
-                    <input
-                      key={dIdx}
-                      type="checkbox"
-                      checked={checked}
-                      onChange={() => onCheck(hIdx, dIdx)}
-                    ></input>
-                  </td>
-                ))}
-              </tr>
-            ))}
-
-            <tr>
-              <th id="sleep-row">Sleep</th>
-              {sleeps.map((hrs, dIdx) => (
-                <td key={dIdx}>
-                  <input
-                    type="number"
-                    max={12}
-                    value={hrs}
-                    onChange={(e) => addSleep(Number(e.target.value), dIdx)}
-                    className="sleep-input"
-                  />
+                    key={dIdx}
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() => onCheck(hIdx, dIdx)}
+                  ></input>
                 </td>
               ))}
             </tr>
-          </tbody>
+          ))}
+
+          <tr>
+            <th id="sleep-row">Sleep</th>
+            {sleeps.map((hrs, dIdx) => (
+              <td key={dIdx}>
+                <input
+                  type="number"
+                  max={12}
+                  value={hrs}
+                  onChange={(e) => addSleep(Number(e.target.value), dIdx)}
+                  className="sleep-input"
+                />
+              </td>
+            ))}
+          </tr>
         </table>
+
         <div className="add-habit">
           <input
             type="button"
@@ -195,6 +215,28 @@ function Tracker() {
             onClick={() => clearAll()}
             className="clear"
           />
+        </div>
+
+        <div className="sleep-graph">
+          <h3>Sleep Graph</h3>
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart
+              data={sleepData}
+              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#CFC8FF" />
+              <XAxis dataKey="day" tick={{ fontSize: 12 }} />
+              <YAxis domain={[0, 12]} tick={{ fontSize: 12 }} />
+              <Tooltip />
+              <Line
+                type="monotone"
+                dataKey="sleep"
+                stroke="#6C5DD0"
+                strokeWidth={2}
+                dot={{ r: 3 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </>
