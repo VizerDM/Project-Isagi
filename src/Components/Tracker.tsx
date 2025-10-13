@@ -19,6 +19,7 @@ type Month = {
   name: string;
   habits: Habit[];
   sleep: number[];
+  Mood: number[];
 };
 
 function Tracker() {
@@ -45,6 +46,7 @@ function Tracker() {
       days,
       sleep: Array(days).fill(0),
       habits: [],
+      Mood: Array(days).fill(0),
     }));
     const saved = localStorage.getItem(STORAGE_KEY_MONTHS);
     if (saved) {
@@ -121,6 +123,39 @@ function Tracker() {
     setAdding(false);
   };
 
+  const setMood = (currentMonth: number, day: number, newMood: number) => {
+    if (newMood < 0 || newMood > 5) return;
+    setMonths((prev) =>
+      prev.map((month, mIdx) =>
+        mIdx === currentMonth
+          ? {
+              ...month,
+              Mood: month.Mood.map((currMood, dIdx) =>
+                dIdx === day ? newMood : currMood
+              ),
+            }
+          : month
+      )
+    );
+  };
+
+  const getMoodEmoji = (mood: number) => {
+    switch (mood) {
+      case 1:
+        return "😠";
+      case 2:
+        return "😓";
+      case 3:
+        return "😐";
+      case 4:
+        return "😃";
+      case 5:
+        return "😎";
+      default:
+        return "";
+    }
+  };
+
   //Clear all
   const clearAll = (monthIndex: number) => {
     window.confirm("Are you sure?");
@@ -190,6 +225,38 @@ function Tracker() {
     sleep: hrs,
   }));
   const [showMonthDropdown, setShowMonthDropdown] = useState(false);
+  const [showMoodDropdowns, setShowMoodDropdown] = useState(() =>
+    Array(months[currentMonth].days).fill(false)
+  );
+
+  useEffect(() => {
+    setShowMoodDropdown(Array(months[currentMonth].days).fill(false));
+  }, [currentMonth, months[currentMonth].days]);
+  const selectRefs = useRef<(HTMLSelectElement | null)[]>([]);
+
+  const handleMoodButtonClick = (dIdx: number) => {
+    setShowMoodDropdown(
+      Array(months[currentMonth].days)
+        .fill(false)
+        .map((_, idx) => idx === dIdx)
+    );
+  };
+  selectRefs.current = Array(months[currentMonth].days).fill(null);
+  if (selectRefs.current.length !== months[currentMonth].days) {
+    selectRefs.current.length = months[currentMonth].days;
+  }
+
+  useEffect(() => {
+    showMoodDropdowns.forEach((isOpen, idx) => {
+      if (isOpen && selectRefs.current[idx]) {
+        selectRefs.current[idx]!.focus();
+        // Trick to force it to open:
+        const el = selectRefs.current[idx]!;
+        const event = new MouseEvent("mousedown", { bubbles: true });
+        el.dispatchEvent(event);
+      }
+    });
+  }, [showMoodDropdowns]);
 
   return (
     <>
@@ -230,7 +297,6 @@ function Tracker() {
             </select>
           )}
         </div>
-
         <table border={1}>
           <tr>
             <th></th>
@@ -239,7 +305,6 @@ function Tracker() {
               return <th key={day}>{day}</th>;
             })}
           </tr>
-
           {months[currentMonth].habits.map((habit, hIdx) => (
             <tr key={hIdx}>
               <th>
@@ -263,7 +328,6 @@ function Tracker() {
               ))}
             </tr>
           ))}
-
           <tr>
             <th id="sleep-row">Sleep</th>
             {months[currentMonth].sleep.map((hrs, dIdx) => (
@@ -277,6 +341,77 @@ function Tracker() {
                   }
                   className="sleep-input"
                 />
+              </td>
+            ))}
+          </tr>
+          <tr>
+            <th>Mood</th>
+            {days.map((day, dIdx) => (
+              <td
+                key={dIdx}
+                style={{ textAlign: "center", position: "relative" }}
+              >
+                {showMoodDropdowns[dIdx] ? (
+                  <div
+                    className="mood-dropdown"
+                    style={{
+                      position: "absolute",
+                      top: "0em",
+                      left: "50%",
+                      transform: "translateX(-50%)",
+                      background: "#2d2b33ff",
+                      border: "1px solid #6C5DD0",
+                      borderRadius: "8px",
+                      boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                      display: "flex",
+
+                      gap: "0.3em",
+                      padding: "0.1em 0.4em",
+                      zIndex: 10,
+                    }}
+                  >
+                    {[1, 2, 3, 4, 5].map((mood) => (
+                      <span
+                        key={mood}
+                        style={{
+                          fontSize: "1.5em",
+                          cursor: "pointer",
+                          transition: "transform 0.15s ease",
+                        }}
+                        onMouseEnter={(e) => {
+                          (e.target as HTMLElement).style.transform =
+                            "scale(1.2)";
+                        }}
+                        onMouseLeave={(e) => {
+                          (e.target as HTMLElement).style.transform =
+                            "scale(1)";
+                        }}
+                        onClick={() => {
+                          setMood(currentMonth, dIdx, mood);
+                          setShowMoodDropdown((prev) =>
+                            prev.map((_, idx) => (idx === dIdx ? false : _))
+                          );
+                        }}
+                      >
+                        {getMoodEmoji(mood)}
+                      </span>
+                    ))}
+                  </div>
+                ) : months[currentMonth].Mood[dIdx] === 0 ? (
+                  <button
+                    className="mood-arrow-btn"
+                    onClick={() => handleMoodButtonClick(dIdx)}
+                  >
+                    ▼
+                  </button>
+                ) : (
+                  <span
+                    style={{ fontSize: "1.5em", cursor: "pointer" }}
+                    onClick={() => handleMoodButtonClick(dIdx)}
+                  >
+                    {getMoodEmoji(months[currentMonth].Mood[dIdx])}
+                  </span>
+                )}
               </td>
             ))}
           </tr>

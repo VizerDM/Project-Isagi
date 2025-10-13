@@ -43,15 +43,15 @@ npm run dev
 
 ##Next Steps / Ideas
 
-📆 Add previous month navigation
+-Add previous month navigation
 
-☁️ Sync with a backend (Supabase / Firebase)
+- Sync with a backend (Supabase / Firebase)
 
-📱 Mobile responsive layout
+- Mobile responsive layout
 
-🎨 Custom themes (dark/light mode)
+- Custom themes (dark/light mode)
 
-🕓 Development Timeline
+- Development Timeline
 
 Built in 4 days — from setup to a fully functional prototype.
 Focused on simplicity, data persistence, and clean design.
