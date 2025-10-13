@@ -50,7 +50,13 @@ function Tracker() {
     }));
     const saved = localStorage.getItem(STORAGE_KEY_MONTHS);
     if (saved) {
-      return JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      return parsed.map((m: any) => ({
+        ...m,
+        sleep: m.sleep ?? Array(m.days).fill(0),
+        habits: m.habits ?? [],
+        Mood: m.Mood ?? Array(m.days).fill(0),
+      }));
     } else {
       return monthsArray;
     }
@@ -330,90 +336,98 @@ function Tracker() {
           ))}
           <tr>
             <th id="sleep-row">Sleep</th>
-            {months[currentMonth].sleep.map((hrs, dIdx) => (
-              <td key={dIdx}>
-                <input
-                  type="number"
-                  max={12}
-                  value={hrs}
-                  onChange={(e) =>
-                    addSleep(Number(e.target.value), dIdx, currentMonth)
-                  }
-                  className="sleep-input"
-                />
-              </td>
-            ))}
+            {
+              /*SLEEP*/ months[currentMonth].sleep.map((hrs, dIdx) => (
+                <td key={dIdx}>
+                  <input
+                    type="number"
+                    max={12}
+                    value={hrs}
+                    onChange={(e) =>
+                      addSleep(Number(e.target.value), dIdx, currentMonth)
+                    }
+                    className="sleep-input"
+                  />
+                </td>
+              ))
+            }
           </tr>
           <tr>
             <th>Mood</th>
-            {days.map((day, dIdx) => (
-              <td
-                key={dIdx}
-                style={{ textAlign: "center", position: "relative" }}
-              >
-                {showMoodDropdowns[dIdx] ? (
-                  <div
-                    className="mood-dropdown"
-                    style={{
-                      position: "absolute",
-                      top: "0em",
-                      left: "50%",
-                      transform: "translateX(-50%)",
-                      background: "#2d2b33ff",
-                      border: "1px solid #6C5DD0",
-                      borderRadius: "8px",
-                      boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
-                      display: "flex",
+            {/*MOOD*/
+            days.map(
+              (
+                day,
+                dIdx 
+              ) => (
+                <td
+                  key={dIdx}
+                  style={{ textAlign: "center", position: "relative" }}
+                >
+                  {showMoodDropdowns[dIdx] ? (
+                    <div
+                      className="mood-dropdown"
+                      style={{
+                        position: "absolute",
+                        top: "0em",
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        background: "#2d2b33ff",
+                        border: "1px solid #6C5DD0",
+                        borderRadius: "8px",
+                        boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                        display: "flex",
 
-                      gap: "0.3em",
-                      padding: "0.1em 0.4em",
-                      zIndex: 10,
-                    }}
-                  >
-                    {[1, 2, 3, 4, 5].map((mood) => (
-                      <span
-                        key={mood}
-                        style={{
-                          fontSize: "1.5em",
-                          cursor: "pointer",
-                          transition: "transform 0.15s ease",
-                        }}
-                        onMouseEnter={(e) => {
-                          (e.target as HTMLElement).style.transform =
-                            "scale(1.2)";
-                        }}
-                        onMouseLeave={(e) => {
-                          (e.target as HTMLElement).style.transform =
-                            "scale(1)";
-                        }}
-                        onClick={() => {
-                          setMood(currentMonth, dIdx, mood);
-                          setShowMoodDropdown((prev) =>
-                            prev.map((_, idx) => (idx === dIdx ? false : _))
-                          );
-                        }}
-                      >
-                        {getMoodEmoji(mood)}
-                      </span>
-                    ))}
-                  </div>
-                ) : months[currentMonth].Mood[dIdx] === 0 ? (
-                  <button
-                    className="mood-arrow-btn"
-                    onClick={() => handleMoodButtonClick(dIdx)}
-                  >
-                    ▼
-                  </button>
-                ) : (
-                  <span
-                    style={{ fontSize: "1.5em", cursor: "pointer" }}
-                    onClick={() => handleMoodButtonClick(dIdx)}
-                  >
-                    {getMoodEmoji(months[currentMonth].Mood[dIdx])}
-                  </span>
-                )}
-              </td>
-            ))}
+                        gap: "0.3em",
+                        padding: "0.1em 0.4em",
+                        zIndex: 10,
+                      }}
+                    >
+                      {[1, 2, 3, 4, 5].map((mood) => (
+                        <span
+                          key={mood}
+                          style={{
+                            fontSize: "1.5em",
+                            cursor: "pointer",
+                            transition: "transform 0.15s ease",
+                          }}
+                          onMouseEnter={(e) => {
+                            (e.target as HTMLElement).style.transform =
+                              "scale(1.2)";
+                          }}
+                          onMouseLeave={(e) => {
+                            (e.target as HTMLElement).style.transform =
+                              "scale(1)";
+                          }}
+                          onClick={() => {
+                            setMood(currentMonth, dIdx, mood);
+                            setShowMoodDropdown((prev) =>
+                              prev.map((_, idx) => (idx === dIdx ? false : _))
+                            );
+                          }}
+                        >
+                          {getMoodEmoji(mood)}
+                        </span>
+                      ))}
+                    </div>
+                  ) : months[currentMonth].Mood[dIdx] === 0 ? (
+                    <button
+                      className="mood-arrow-btn"
+                      onClick={() => handleMoodButtonClick(dIdx)}
+                    >
+                      ▼
+                    </button>
+                  ) : (
+                    <span
+                      style={{ fontSize: "1.5em", cursor: "pointer" }}
+                      onClick={() => handleMoodButtonClick(dIdx)}
+                    >
+                      {getMoodEmoji(months[currentMonth].Mood[dIdx])}
+                    </span>
+                  )}
+                </td>
+              )
+            )}
           </tr>
         </table>
 
