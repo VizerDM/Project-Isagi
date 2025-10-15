@@ -15,7 +15,7 @@ A minimal React app to track daily habits and sleep hours — built from scratch
 
 ---
 
-## 🧠 Built With
+##  Built With
 
 - **React + Vite**
 - **TypeScript**
@@ -24,7 +24,7 @@ A minimal React app to track daily habits and sleep hours — built from scratch
 
 ---
 
-## ⚙️ How to Run Locally
+##  How to Run Locally
 
 ```bash
 # Clone this repository
