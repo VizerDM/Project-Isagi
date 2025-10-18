@@ -28,10 +28,10 @@ A minimal React app to track daily habits and sleep hours — built from scratch
 
 ```bash
 # Clone this repository
-git clone https://github.com/<your-username>/<repo-name>.git
+git clone https://github.com/VizerDM/Project-Isagi.git
 
 # Navigate to the folder
-cd <repo-name>
+cd Project-Isagi
 
 # Install dependencies
 npm install
@@ -41,13 +41,11 @@ npm run dev
 
 ---
 
-##Next Steps / Ideas
+##Future Updates
 
 -Add previous month navigation
 
 - Sync with a backend (Supabase / Firebase)
-
-- Mobile responsive layout
 
 - Custom themes (dark/light mode)
 
