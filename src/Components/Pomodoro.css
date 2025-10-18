@@ -1,0 +1,12 @@
+body {
+    background-color: bisque;
+    margin: 0;
+    width: 100%;
+}
+
+main {
+    margin: 0 100px;
+    padding: 30px;
+    width: 450px;
+    text-align: center;
+}

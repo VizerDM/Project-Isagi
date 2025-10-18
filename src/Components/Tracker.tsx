@@ -354,12 +354,9 @@ function Tracker() {
           </tr>
           <tr>
             <th>Mood</th>
-            {/*MOOD*/
-            days.map(
-              (
-                day,
-                dIdx 
-              ) => (
+            {
+              /*MOOD*/
+              days.map((day, dIdx) => (
                 <td
                   key={dIdx}
                   style={{ textAlign: "center", position: "relative" }}
@@ -419,15 +416,21 @@ function Tracker() {
                     </button>
                   ) : (
                     <span
-                      style={{ fontSize: "1.5em", cursor: "pointer" }}
+                      style={{
+                        fontSize: "1.2em",
+                        cursor: "pointer",
+                        textShadow: "0px 0px 5px #292904ff",
+                        border: "0.2px solid #CFC8FF",
+                        borderRadius: "7px",
+                      }}
                       onClick={() => handleMoodButtonClick(dIdx)}
                     >
                       {getMoodEmoji(months[currentMonth].Mood[dIdx])}
                     </span>
                   )}
                 </td>
-              )
-            )}
+              ))
+            }
           </tr>
         </table>
 
