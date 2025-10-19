@@ -8,7 +8,8 @@ function App() {
       <div className="main-app">
         <h1>Isagi</h1>
         <Tracker />
-        <Pomodoro />
+        <Pomodoro/>
+
       </div>
     </>
   );

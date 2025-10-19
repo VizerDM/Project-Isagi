@@ -7,6 +7,17 @@ body {
 main {
     margin: 0 100px;
     padding: 30px;
-    width: 450px;
+    width: 210px;
     text-align: center;
+}
+
+button.pomo-button {
+    background-color: transparent;
+    color: #CFC8FF;
+    border: 0;
+    display: inline-block;
+    width: 50px;
+    margin: 0px 10px;
+    filter: drop-shadow(0 0 1.5px rgb(158, 157, 157));
+    cursor: pointer;
 }
