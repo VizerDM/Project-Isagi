@@ -2,6 +2,7 @@ body {
     background-color: bisque;
     margin: 0;
     width: 100%;
+
 }
 
 main {
@@ -9,6 +10,7 @@ main {
     padding: 30px;
     width: 210px;
     text-align: center;
+    float: left;
 }
 
 button.pomo-button {

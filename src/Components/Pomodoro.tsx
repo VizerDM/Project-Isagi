@@ -9,7 +9,8 @@ function Pomodoro() {
   const [breakTime, setBreakTime] = useState(10);
 
   return (
-    <main>
+    <main className="Pomo-main">
+
       {showSettings ? (
         <Settings
           workTime={workTime}

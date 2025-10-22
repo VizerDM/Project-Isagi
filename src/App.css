@@ -10,22 +10,83 @@ body,
     font-family: 'Inter', sans-serif;
     font-weight: 400;
     height: 100%;
+    color: #CFC8FF;
+
+
 
 
 }
 
+.main-app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+}
 
-body {
-    margin: 0;
-    color: lab(83.87% 11.52 -24.44);
 
-    width: 100%;
-    box-sizing: border-box;
+.main-content {
+    display: flex;
+    height: 100%;
+}
+
+.Pomo-main {
+    background-color: #262A34;
+    border-radius: 20px;
+    border: 1px solid #868b9e;
+    margin-left: 0;
+    height: 280px;
+    box-shadow: 0.5px 2px 3px black;
+}
+
+
+.tracker-section {
+    flex-shrink: 0;
+    min-width: 300px;
+    padding: 20px 10px 0 50px;
+}
+
+.sleep-graph {
+    box-shadow: 0px 0px 5px black;
+
+}
+
+
+
+.pomodoro-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    padding: 20px 50px 0 30px;
+    margin-top: 33px;
+}
+
+.pomodoro-section h3 {
+    margin: 10px 10px;
+    text-decoration: underline;
+    font-style: italic;
+    font-weight: 500;
+    text-align: center;
+    font-size: 1.7rem;
+
+}
+
+.pomo-settings{
+    display: flex;
+    flex-direction: column;
+    justify-content: baseline;
+    align-items: center;
+}
+
+h3 {
+    color: #CFC8FF;
 }
 
 h1 {
-    padding-left: 50px;
     width: 100%;
+    color: #CFC8FF;
+    padding-left: 50px;
     position: sticky;
     display: flex;
     justify-content: baseline;

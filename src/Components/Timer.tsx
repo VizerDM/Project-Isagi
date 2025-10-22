@@ -15,7 +15,7 @@ type SettingsProps = {
 };
 
 function Timer({ workTime, setShowSettings, breakTime }: SettingsProps) {
-  const [isPaused, setIsPaused] = useState(false);
+  const [isPaused, setIsPaused] = useState(true);
   const [mode, setMode] = useState("w");
   const [timeLeft, setTimeLeft] = useState(workTime * 60);
 

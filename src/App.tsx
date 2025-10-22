@@ -7,9 +7,16 @@ function App() {
     <>
       <div className="main-app">
         <h1>Isagi</h1>
-        <Tracker />
-        <Pomodoro/>
+        <div className="main-content">
+          <div className="tracker-section">
+            <Tracker />
+          </div>
+          <div className="pomodoro-section">
+            <h3>Study</h3>
 
+            <Pomodoro />
+          </div>
+        </div>
       </div>
     </>
   );
