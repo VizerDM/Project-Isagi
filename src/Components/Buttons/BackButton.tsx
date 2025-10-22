@@ -2,9 +2,7 @@ function BackButton(props: any) {
   return (
     <button
       className="pomo-button"
-      style={{ marginTop: 8, width: "30px",
-        
-       }}
+      style={{ marginTop: 8, width: "50px"  }}
       {...props}
     >
       <svg
@@ -18,7 +16,7 @@ function BackButton(props: any) {
         <path
           stroke-linecap="round"
           stroke-linejoin="round"
-          d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
+          d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
         />
       </svg>
     </button>
